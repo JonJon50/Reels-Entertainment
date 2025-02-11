@@ -53,6 +53,38 @@ export default function Home() {
          🚀 Follow on Twitch
         </motion.a>
       </motion.section>
+
+      {/* Twitch Video & Chat Section */}
+      <section className="w-full flex flex-col items-center py-10 bg-black">
+        <h2 className="text-2xl font-bold mb-4">Watch Me Live on Twitch</h2>
+
+        <div
+          className="flex flex-col md:flex-row justify-center items-center gap-6 w-11/12 max-w-5xl p-6 border-4 border-[#9146FF] rounded-lg bg-gray-900"
+        >
+          {/* Twitch Video Embed */}
+          <div className="w-full md:w-3/5">
+            <iframe
+              src="https://player.twitch.tv/?channel=djreels&parent=localhost"
+              height="400"
+              width="100%"
+              allowFullScreen
+              className="rounded-md"
+            ></iframe>
+          </div>
+
+          {/* Twitch Chat Embed */}
+          <div className="w-full md:w-2/5">
+            <iframe
+              src="https://www.twitch.tv/embed/djreels/chat?darkpopout&parent=localhost"
+              height="400"
+              width="100%"
+              className="rounded-md"
+            ></iframe>
+          </div>
+        </div>
+      </section>
+
+
     </main>
   );
 }
