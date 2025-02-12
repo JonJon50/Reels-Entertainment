@@ -1,5 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 export default function Home() {
   return (
@@ -84,6 +89,55 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Event Photo Carousel */}
+      <section className="w-full py-10 bg-black">
+        <h2 className="text-2xl font-bold text-center mb-6">Past Event Highlights</h2>
+
+        <div className="w-11/12 max-w-5xl">
+          <Swiper
+            modules={[Pagination, Navigation]}
+            spaceBetween={20}
+            slidesPerView={1}
+            pagination={{ clickable: true }}
+            navigation
+            breakpoints={{
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+            className="rounded-lg overflow-hidden"
+          >
+            {/* Replace with your event images */}
+            <SwiperSlide><img src="/white.jpg" alt="Event 1" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/red.jpg" alt="Event 2" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/blue.jpg" alt="Event 3" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/stand.jpg" alt="Event 4" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/mic.jpg" alt="Event 5" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/luv.png" alt="Event 6" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/knee.png" alt="Event 7" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/stand.jpg" alt="Event 8" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/talk.jpg" alt="Event 6" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/ballroom.JPG" alt="Event 7" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+            <SwiperSlide><img src="/front.png" alt="Event 8" className="w-full h-60 object-cover rounded-md" /></SwiperSlide>
+
+            {/* Video Slides */}
+            <SwiperSlide>
+              <video controls className="w-full h-60 object-cover rounded-md">
+                <source src="/videos/54.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </SwiperSlide>
+
+            <SwiperSlide>
+              <video controls className="w-full h-60 object-cover rounded-md">
+                <source src="/videos/yolo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </SwiperSlide>
+
+
+          </Swiper>
+        </div>
+      </section>
 
     </main>
   );
