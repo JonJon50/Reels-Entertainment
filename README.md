@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Reels Entertainment - Next.js Website
 
-## Getting Started
+Welcome to **Reels Entertainment**, a fully responsive Next.js-based website featuring live Twitch streaming integration, smooth animations, and an immersive user experience. This project is deployed on Vercel and optimized for SEO.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 🎥 **Twitch Live Streaming** - Watch DJ Reels perform live on Twitch directly on the website.
+- 📅 **Event Scheduling** - Displays upcoming DJ stream schedules.
+- 🎭 **Smooth Animations** - Built with Framer Motion for enhanced UI interactions.
+- 💌 **Contact Form with Nodemailer** - Allows users to send booking inquiries.
+- 🌠 **Shooting Stars Effect** - Animated background with moving stars.
+- 🖼 **Image & Video Carousel** - Interactive Swiper-based past event showcase.
+- 🌙 **Dark Mode Support** - Tailwind CSS-based theme adaptation.
+- 📈 **SEO Optimized** - Metadata and structured data for improved search ranking.
+
+## 🛠 Tech Stack
+
+- **Frontend:** Next.js 15, React 19, TypeScript, Tailwind CSS
+- **UI Animations:** Framer Motion
+- **Forms & Validation:** React Hook Form
+- **Streaming API:** Twitch Embed
+- **Email Service:** Nodemailer (via Gmail SMTP)
+- **Deployment:** Vercel
+
+## 📂 Folder Structure
+
+```
+reels-entertainment/
+├── .next/                  # Compiled Next.js build files
+├── .vercel/                # Vercel configuration
+├── node_modules/           # Dependencies
+├── public/                 # Static assets (images, videos, etc.)
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── contact/route.ts  # Nodemailer API route
+│   │   ├── components/
+│   │   │   ├── About.tsx         # About section
+│   │   │   ├── ContactForm.tsx   # Contact form component
+│   │   │   ├── ShootingStars.tsx # Animated stars background
+│   │   ├── globals.css           # Global styles
+│   │   ├── layout.tsx            # Main layout including Footer
+│   │   ├── page.tsx              # Home page
+├── .gitignore
+├── package.json
+├── tsconfig.json
+├── tailwind.config.ts
+├── README.md                     # You're here!
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/JonJon50/Reels-Entertainment.git
+cd Reels-Entertainment
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2️⃣ Install Dependencies
+```bash
+npm install
+# or
+yarn install
+```
 
-## Learn More
+### 3️⃣ Create a `.env.local` File
 
-To learn more about Next.js, take a look at the following resources:
+```env
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> **Note:** You may need to enable "Less Secure Apps" or create an App Password in your Gmail account.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4️⃣ Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Deploy on Vercel
+## 🌍 Deploying on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is already configured for Vercel. To deploy:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push changes to GitHub.
+2. Connect your repo on [Vercel](https://vercel.com/).
+3. Set environment variables in **Vercel Dashboard > Settings**.
+4. Deploy automatically!
+
+## 📸 Screenshots
+
+![Homepage Preview](./public/github.png) *(Replace with actual image link)*
+
+## 📢 Contributing
+
+Pull requests are welcome! Open an issue if you find bugs or have feature requests.
+
+## 📜 License
+
+This project is licensed under the MIT License.
+
+---
+
+_Developed by [John Hagens](https://github.com/JonJon50)_ 🎧
