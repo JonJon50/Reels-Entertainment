@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         // ✅ Improved HTML email format
         const mailOptions = {
             from: `"${name}" <${email}>`,
-            to: "your_email@gmail.com", // Change to your actual recipient email
+            to: "your_actual_email@gmail.com", // ✅ Replace this with your actual email
             subject: `New Contact Form Submission from ${name}`,
             html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #f9f9f9;">
