@@ -5,34 +5,36 @@ export async function POST(req: Request) {
     try {
         const { name, email, message } = await req.json();
 
-        // ✅ Validate form inputs
         if (!name || !email || !message) {
-            return NextResponse.json({ success: false, error: "All fields are required" }, { status: 400 });
+            return NextResponse.json(
+                { success: false, error: "All fields are required" },
+                { status: 400 }
+            );
         }
 
-        // ✅ Setup Nodemailer transporter (Gmail)
+        // ✅ Make sure EMAIL_USER & EMAIL_PASS are being accessed properly
         const transporter = nodemailer.createTransport({
-            service: "gmail", // ✅ Uses Gmail directly
+            service: "gmail",
             auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
+                user: process.env.EMAIL_USER,  // Ensure this is loaded
+                pass: process.env.EMAIL_PASS,  // Ensure this is loaded
             },
         });
 
-        // ✅ Email content
         const mailOptions = {
-            from: process.env.EMAIL_USER, // ✅ Sender (your email)
-            to: process.env.EMAIL_USER, // ✅ You receive emails at your own Gmail
-            subject: "New Contact Form Submission",
+            from: process.env.EMAIL_USER,
+            to: "your_email@gmail.com",
+            subject: `New Contact Form Submission from ${name}`,
             text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
         };
 
-        // ✅ Send email
-        await transporter.sendMail(mailOptions);
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Email sent:", info.response);
 
-        return NextResponse.json({ success: true, message: "Email sent successfully!" });
+        return NextResponse.json({ success: true }, { status: 200 });
     } catch (error) {
         console.error("Error sending email:", error);
-        return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
     }
 }
