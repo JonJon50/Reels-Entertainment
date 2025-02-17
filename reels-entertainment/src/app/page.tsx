@@ -6,6 +6,8 @@ import { Pagination, Navigation, Autoplay } from "swiper/modules"; // ✅ Added 
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import About from "./components/About";
+import ContactForm from "./components/ContactForm";
 
 export default function Home() {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
@@ -173,6 +175,12 @@ export default function Home() {
         </motion.div>
       )}
       
+      {/* About & Contact Section */}
+      <section className="w-full py-10 bg-black flex flex-col md:flex-row justify-center items-start gap-10 px-6">
+        <About />
+        <ContactForm />
+      </section>
+
     </main>
   );
 }
