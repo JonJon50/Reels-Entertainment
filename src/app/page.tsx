@@ -20,15 +20,40 @@ export default function Home() {
           <source src="/reel.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+      
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-        <div className="relative z-10">
+        <div className="relative z-10 text-center">
           <h1 className="text-5xl font-bold">Welcome to Reels Entertainment 🎧</h1>
           <p className="mt-4 text-lg">Book me for your next event!</p>
-          <a href="#contact" className="mt-6 inline-block px-6 py-3 bg-blue-500 rounded-lg text-lg">
+
+          {/* Book Now Button - Smooth Scroll to Contact Section */}
+          <motion.button
+            className="mt-6 px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg text-lg hover:bg-blue-600 transition duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => {
+              e.preventDefault();
+              document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          >
             Book Now
-          </a>
+          </motion.button>
+
+          {/* Watch Me Live Button - Smooth Scroll to Twitch Section */}
+          <motion.button
+            className="mt-4 ml-4 px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg text-lg hover:bg-purple-600 transition duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => {
+              e.preventDefault();
+              document.querySelector("#twitch-live")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          >
+            🎥 Watch Me Live
+          </motion.button>
         </div>
-      </section>
+     </section>
+
 
       {/* Twitch Follow Section */}
       <motion.section
@@ -51,7 +76,7 @@ export default function Home() {
       </motion.section>
 
       {/* Twitch Video & Chat Section */}
-      <section className="w-full flex flex-col items-center py-10 bg-black">
+      <section id="twitch-live" className="w-full flex flex-col items-center py-10 bg-black">
         <h2 className="text-2xl font-bold mb-4">Watch Me Live on Twitch</h2>
         <div className="flex flex-col md:flex-row justify-center items-center gap-6 w-11/12 max-w-5xl p-6 border-4 border-[#9146FF] rounded-lg bg-gray-900">
           

@@ -31,7 +31,7 @@ export default function ContactForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 border-4 border-[#9146FF] p-6 rounded-md">
+        <form id="contact" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 border-4 border-[#9146FF] p-6 rounded-md">
             <input type="text" {...register("name", { required: true })} placeholder="Your Name" className="p-3 bg-gray-800 border border-gray-700 rounded-md" />
             <input type="email" {...register("email", { required: true })} placeholder="Your Email" className="p-3 bg-gray-800 border border-gray-700 rounded-md" />
             <textarea {...register("message", { required: true })} placeholder="Your Message" rows={4} className="p-3 bg-gray-800 border border-gray-700 rounded-md"></textarea>
