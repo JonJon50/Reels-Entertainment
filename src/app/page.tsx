@@ -8,12 +8,17 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import About from "./components/About";
 import ContactForm from "./components/ContactForm";
+import ShootingStars from "./components/ShootingStars";
+
 
 export default function Home() {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
 
   return (
     <main className="flex flex-col items-center w-full text-white">
+
+      <ShootingStars /> {/* 🔥 Shooting Stars Effect */}
+
       {/* Video Section */}
       <section className="relative w-full h-screen flex items-center justify-center text-center">
         <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
