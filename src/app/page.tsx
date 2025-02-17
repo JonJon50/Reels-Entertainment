@@ -54,20 +54,20 @@ export default function Home() {
       <section className="w-full flex flex-col items-center py-10 bg-black">
         <h2 className="text-2xl font-bold mb-4">Watch Me Live on Twitch</h2>
         <div className="flex flex-col md:flex-row justify-center items-center gap-6 w-11/12 max-w-5xl p-6 border-4 border-[#9146FF] rounded-lg bg-gray-900">
-          {/* Twitch Video Embed */}
-          <div className="w-full md:w-3/5">
+          
+          {/* ✅ Updated Twitch Video Embed with Responsive Styling */}
+          <div className="relative w-full md:w-3/5 aspect-video">
             <iframe
-              src="https://player.twitch.tv/?channel=djreels&parent=localhost"
-              height="400"
-              width="100%"
+              src="https://player.twitch.tv/?channel=djreels&parent=localhost&parent=reels-entertainment.vercel.app"
               allowFullScreen
-              className="rounded-md"
+              className="w-full h-full rounded-md"
             ></iframe>
           </div>
+
           {/* Twitch Chat Embed */}
           <div className="w-full md:w-2/5">
             <iframe
-              src="https://www.twitch.tv/embed/djreels/chat?darkpopout&parent=localhost"
+              src="https://www.twitch.tv/embed/djreels/chat?darkpopout&parent=localhost&parent=reels-entertainment.vercel.app"
               height="400"
               width="100%"
               className="rounded-md"
@@ -75,6 +75,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
       {/* Event Photo & Video Carousel */}
       <section className="w-full py-10 bg-black">
