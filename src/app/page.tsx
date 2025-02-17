@@ -107,20 +107,20 @@ export default function Home() {
             ))}
 
             {/* Video Slides */}
-            {["54.mp4", "yolo.mp4", "sweet.mp4", "wedding.mp4"].map((vid, index) => (
-              <SwiperSlide key={index} onClick={() => setSelectedMedia(`/videos/${vid}`)}
-                className="flex justify-center items-center">
-                <motion.video
-                  controls
-                  autoPlay={false} // ✅ Prevents auto-play
-                  preload="metadata" // ✅ Loads metadata but does not play
-                  className="w-full h-60 object-cover rounded-md cursor-pointer"
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <source src={`/videos/${vid}`} type="video/mp4" />
-                </motion.video>
-              </SwiperSlide>
-            ))}
+          {["54.mp4", "yolo.mp4", "sweet.mp4", "wedding.mp4"].map((vid, index) => (
+  <SwiperSlide key={index} onClick={() => setSelectedMedia(`/videos/${vid}`)}
+    className="flex justify-center items-center">
+    <motion.video
+      controls
+      autoPlay={false} // ✅ Prevents auto-play
+      preload="metadata" // ✅ Loads metadata but does not play
+      className="w-full h-60 object-cover rounded-md cursor-pointer"
+      whileTap={{ scale: 0.9 }}
+    >
+      <source src={`/videos/${vid}`} type="video/mp4" />
+    </motion.video>
+  </SwiperSlide>
+))}
 
 
           </Swiper>
