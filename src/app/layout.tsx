@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// ✅ IMPROVED SEO METADATA (WITHOUT TWITTER)
+// ✅ IMPROVED SEO METADATA (WITH metadataBase)
 export const metadata: Metadata = {
+  metadataBase: new URL("https://reels-entertainment.vercel.app"), // ✅ Add this to resolve Open Graph images
   title: "DJ Reels | Live DJ & Event Entertainment",
   description:
     "Experience live DJ performances, event entertainment, and music streams with DJ Reels. Book now for your next event!",
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/public/dj-cover.png",
+        url: "/dj-cover.png", // ✅ No need for `/public/`, Next.js serves static assets directly from `public/`
         width: 1200,
         height: 630,
         alt: "DJ Reels Entertainment",

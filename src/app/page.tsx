@@ -17,11 +17,14 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center w-full text-white">
 
-      <ShootingStars /> {/* 🔥 Shooting Stars Effect */}
+      <ShootingStars /> 🔥 Shooting Stars Effect
 
       {/* Video Section */}
       <section className="relative w-full h-screen flex items-center justify-center text-center">
+        
+
         <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
+          <ShootingStars /> {/* 🔥 Shooting Stars Effect */}
           <source src="/reel.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
@@ -79,12 +82,11 @@ export default function Home() {
           🚀 Follow on Twitch
         </motion.a>
       </motion.section>
-
       {/* Twitch Video & Chat Section */}
-      <section id="twitch-live" className="w-full flex flex-col items-center py-10 bg-black">
+      <section id="twitch-live" className="twitch-live-section w-full flex flex-col items-center py-10 bg-black">
         <h2 className="text-2xl font-bold mb-4">Watch Me Live on Twitch</h2>
         <div className="flex flex-col md:flex-row justify-center items-center gap-6 w-11/12 max-w-5xl p-6 border-4 border-[#9146FF] rounded-lg bg-gray-900">
-          
+
           {/* ✅ Updated Twitch Video Embed with Responsive Styling */}
           <div className="relative w-full md:w-3/5 aspect-video">
             <iframe
@@ -105,6 +107,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
 
       {/* Event Photo & Video Carousel */}

@@ -68,6 +68,11 @@ body {
   animation: shooting 1.5s linear forwards;
 }
 
+.twitch-live-section {
+  position: relative;
+  z-index: 1;
+}
+
 @keyframes shooting {
   from {
     transform: translateX(0) translateY(0);
