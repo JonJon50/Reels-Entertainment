@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center w-full text-white">
 
-      <ShootingStars /> 🔥 Shooting Stars Effect
+      <ShootingStars />    
 
       {/* Video Section */}
       <section className="relative w-full h-screen flex items-center justify-center text-center">
