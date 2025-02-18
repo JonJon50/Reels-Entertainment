@@ -16,7 +16,7 @@ export default function Footer() {
 
                 {/* Center: Copyright Text */}
                 <div className="text-center text-sm">
-                    Copyright &copy; <a href="https://djreels.com" className="hover:underline">DJreels</a> {new Date().getFullYear()}
+                    Copyright &copy; <a href="https://github.com/JonJon50/Reels-Entertainment" className="hover:underline">DJreels</a> {new Date().getFullYear()}
                 </div>
 
                 {/* Right: Social Media Icons */}
