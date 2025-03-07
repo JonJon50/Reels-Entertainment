@@ -82,17 +82,19 @@ export default function Home() {
           🚀 Follow on Twitch
         </motion.a>
       </motion.section>
+
       {/* Twitch Video & Chat Section */}
       <section id="twitch-live" className="twitch-live-section w-full flex flex-col items-center py-10 bg-black">
         <h2 className="text-2xl font-bold mb-4">Watch Me Live on Twitch</h2>
         <div className="flex flex-col md:flex-row justify-center items-center gap-6 w-11/12 max-w-5xl p-6 border-4 border-[#9146FF] rounded-lg bg-gray-900">
 
-          {/* ✅ Updated Twitch Video Embed with Responsive Styling */}
+          {/* Twitch Video Embed with Responsive Styling */}
           <div className="relative w-full md:w-3/5 aspect-video">
             <iframe
               src="https://player.twitch.tv/?channel=djreels&parent=localhost&parent=reels-entertainment.vercel.app"
               allowFullScreen
               className="w-full h-full rounded-md"
+              sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
             ></iframe>
           </div>
 
@@ -103,6 +105,7 @@ export default function Home() {
               height="400"
               width="100%"
               className="rounded-md"
+              sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
             ></iframe>
           </div>
         </div>
