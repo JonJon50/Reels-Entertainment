@@ -1,29 +1,17 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
-import { Swiper as SwiperType } from "swiper";
-
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import About from "./components/About";
+import ContactForm from "./components/ContactForm";
 import ShootingStars from "./components/ShootingStars";
 
 export default function Home() {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
-  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  // 🛑 Stops video & resets when closing modal
-  const closeModal = () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-    setSelectedMedia(null);
-    if (swiperInstance) swiperInstance.autoplay.start(); // Resume autoplay when modal is closed
-  };
 
   return (
     <main className="flex flex-col items-center w-full text-white">
@@ -31,7 +19,7 @@ export default function Home() {
 
       {/* Video Section */}
       <section className="relative w-full h-screen flex items-center justify-center text-center">
-        <video loop muted className="absolute top-0 left-0 w-full h-full object-cover">
+        <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
           <source src="/reel.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
@@ -41,7 +29,7 @@ export default function Home() {
           <h1 className="text-5xl font-bold">Welcome to Reels Entertainment 🎧</h1>
           <p className="mt-4 text-lg">Book me for your next event!</p>
 
-          {/* Book Now Button */}
+          {/* Book Now Button - Smooth Scroll to Contact Section */}
           <motion.button
             className="mt-6 px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg text-lg hover:bg-blue-600 transition duration-300"
             whileHover={{ scale: 1.05 }}
@@ -52,6 +40,19 @@ export default function Home() {
             }}
           >
             Book Now
+          </motion.button>
+
+          {/* Watch Me Live Button - Smooth Scroll to Twitch Section */}
+          <motion.button
+            className="mt-4 ml-4 px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg text-lg hover:bg-purple-600 transition duration-300"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => {
+              e.preventDefault();
+              document.querySelector("#twitch-live")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          >
+            🎥 Watch Me Live
           </motion.button>
         </div>
       </section>
@@ -76,6 +77,31 @@ export default function Home() {
         </motion.a>
       </motion.section>
 
+      {/* Twitch Video & Chat Section */}
+      <section id="twitch-live" className="w-full flex flex-col items-center py-10 bg-black">
+        <h2 className="text-2xl font-bold mb-4">Watch Me Live on Twitch</h2>
+        <div className="flex flex-col md:flex-row justify-center items-center gap-6 w-11/12 max-w-5xl p-6 border-4 border-[#9146FF] rounded-lg bg-gray-900">
+          {/* Twitch Video Embed */}
+          <div className="relative w-full md:w-3/5 aspect-video">
+            <iframe
+              src="https://player.twitch.tv/?channel=djreels&parent=localhost&parent=reels-entertainment.vercel.app"
+              allowFullScreen
+              className="w-full h-full rounded-md"
+            ></iframe>
+          </div>
+
+          {/* Twitch Chat Embed */}
+          <div className="w-full md:w-2/5">
+            <iframe
+              src="https://www.twitch.tv/embed/djreels/chat?darkpopout&parent=localhost&parent=reels-entertainment.vercel.app"
+              height="400"
+              width="100%"
+              className="rounded-md"
+            ></iframe>
+          </div>
+        </div>
+      </section>
+
       {/* Event Photo & Video Carousel */}
       <section className="w-full py-10 bg-black">
         <h2 className="text-2xl font-bold text-center mb-6">Past Event Highlights</h2>
@@ -87,7 +113,10 @@ export default function Home() {
             autoplay={{ delay: 3000, disableOnInteraction: false }}
             pagination={{ clickable: true }}
             navigation
-            onSwiper={setSwiperInstance} // ✅ Save Swiper instance
+            breakpoints={{
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
             className="relative rounded-lg overflow-hidden"
           >
             {/* Image Slides */}
@@ -107,8 +136,8 @@ export default function Home() {
               <SwiperSlide key={index} onClick={() => setSelectedMedia(`/videos/${vid}`)}>
                 <motion.video
                   controls
-                  autoPlay={false} // ✅ Prevents autoplay
-                  preload="metadata" // ✅ Loads metadata but does not play
+                  autoPlay={false}
+                  preload="metadata"
                   className="w-full h-60 object-cover rounded-md cursor-pointer"
                   whileTap={{ scale: 0.9 }}
                 >
@@ -124,13 +153,12 @@ export default function Home() {
       {selectedMedia && (
         <motion.div
           className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
-          onClick={closeModal} // ✅ Close modal on click
+          onClick={() => setSelectedMedia(null)}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           {selectedMedia.endsWith(".mp4") ? (
             <motion.video
-              ref={videoRef} // ✅ Reference for stopping video
               controls
               className="max-w-full max-h-full rounded-lg shadow-lg"
               initial={{ scale: 0.5 }}
@@ -148,6 +176,12 @@ export default function Home() {
           )}
         </motion.div>
       )}
+
+      {/* About & Contact Section */}
+      <section className="w-full py-10 bg-black flex flex-col md:flex-row justify-center items-start gap-10 px-6">
+        <About />
+        <ContactForm />
+      </section>
     </main>
   );
 }
