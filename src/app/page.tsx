@@ -10,10 +10,11 @@ import "swiper/css/navigation";
 import About from "./components/About";
 import ContactForm from "./components/ContactForm";
 import ShootingStars from "./components/ShootingStars";
-import { useStore } from "../store/useStore"; // ✅ Correct import
+
 
 export default function Home() {
-  const { selectedMedia, setSelectedMedia, resetMedia } = useStore(); // ✅ Zustand for global state
+  const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
+ // ✅ Zustand for global state
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
   // References for videos in the carousel
@@ -28,16 +29,15 @@ export default function Home() {
       modalVideoRef.current.removeAttribute("src");
       modalVideoRef.current.load();
     }
-
-    setSelectedMedia(null); // ✅ Reset Zustand state
+    setSelectedMedia(null); // Local state reset
 
     if (swiperInstance) swiperInstance.autoplay.start(); // Resume autoplay
   };
 
   // ✅ Clear Zustand state when the page loads
   useEffect(() => {
-    resetMedia();
-  }, [resetMedia]); // ✅ Add resetMedia as a dependency
+    setSelectedMedia(null);
+  }, []);
 
 
   return (
