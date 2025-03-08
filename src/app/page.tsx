@@ -1,30 +1,52 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react"; // ✅ Import useEffect
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Navigation, Autoplay } from "swiper/modules"; // ✅ Added Autoplay
+import { Pagination, Navigation, Autoplay } from "swiper/modules";
+import { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import About from "./components/About";
 import ContactForm from "./components/ContactForm";
 import ShootingStars from "./components/ShootingStars";
-
+import { useStore } from "../store/useStore"; // ✅ Correct import
 
 export default function Home() {
-  const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
+  const { selectedMedia, setSelectedMedia, resetMedia } = useStore(); // ✅ Zustand for global state
+  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
+
+  // References for videos in the carousel
+  const carouselVideoRefs = useRef<{ [key: string]: HTMLVideoElement | null }>({});
+  const modalVideoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Stops video before closing modal
+  const closeModal = () => {
+    if (modalVideoRef.current) {
+      modalVideoRef.current.pause();
+      modalVideoRef.current.currentTime = 0;
+      modalVideoRef.current.removeAttribute("src");
+      modalVideoRef.current.load();
+    }
+
+    setSelectedMedia(null); // ✅ Reset Zustand state
+
+    if (swiperInstance) swiperInstance.autoplay.start(); // Resume autoplay
+  };
+
+  // ✅ Clear Zustand state when the page loads
+  useEffect(() => {
+    resetMedia();
+  }, [resetMedia]); // ✅ Add resetMedia as a dependency
+
 
   return (
     <main className="flex flex-col items-center w-full text-white">
-
-      <ShootingStars />    
+      <ShootingStars />
 
       {/* Video Section */}
       <section className="relative w-full h-screen flex items-center justify-center text-center">
-        
-
-        <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover">
-          <ShootingStars /> {/* 🔥 Shooting Stars Effect */}
+        <video loop muted className="absolute top-0 left-0 w-full h-full object-cover">
           <source src="/reel.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
@@ -60,80 +82,24 @@ export default function Home() {
             🎥 Watch Me Live
           </motion.button>
         </div>
-     </section>
-
-
-      {/* Twitch Follow Section */}
-      <motion.section
-        className="relative w-full py-6 text-center overflow-hidden"
-        style={{ backgroundColor: "#9146FF", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)" }}
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-      >
-        <h2 className="text-2xl font-bold">Live streaming on Twitch! Follow for notifications.</h2>
-        <motion.a
-          href="https://www.twitch.tv/djreels/about"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 inline-block px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-300 transition duration-300"
-          whileHover={{ scale: 1.05 }}
-        >
-          🚀 Follow on Twitch
-        </motion.a>
-      </motion.section>
-
-      {/* Twitch Video & Chat Section */}
-      <section id="twitch-live" className="twitch-live-section w-full flex flex-col items-center py-10 bg-black">
-        <h2 className="text-2xl font-bold mb-4">Watch Me Live on Twitch</h2>
-        <div className="flex flex-col md:flex-row justify-center items-center gap-6 w-11/12 max-w-5xl p-6 border-4 border-[#9146FF] rounded-lg bg-gray-900">
-
-          {/* Twitch Video Embed with Responsive Styling */}
-          <div className="relative w-full md:w-3/5 aspect-video">
-            <iframe
-              src="https://player.twitch.tv/?channel=djreels&parent=localhost&parent=reels-entertainment.vercel.app"
-              allowFullScreen
-              className="w-full h-full rounded-md"
-              sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
-            ></iframe>
-          </div>
-
-          {/* Twitch Chat Embed */}
-          <div className="w-full md:w-2/5">
-            <iframe
-              src="https://www.twitch.tv/embed/djreels/chat?darkpopout&parent=localhost&parent=reels-entertainment.vercel.app"
-              height="400"
-              width="100%"
-              className="rounded-md"
-              sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
-            ></iframe>
-          </div>
-        </div>
       </section>
-
-
-
       {/* Event Photo & Video Carousel */}
       <section className="w-full py-10 bg-black">
         <h2 className="text-2xl font-bold text-center mb-6">Past Event Highlights</h2>
         <div className="w-11/12 max-w-5xl mx-auto relative">
           <Swiper
-            modules={[Pagination, Navigation, Autoplay]} // ✅ Added Autoplay
+            modules={[Pagination, Navigation, Autoplay]}
             spaceBetween={20}
             slidesPerView={1}
-            autoplay={{ delay: 3000, disableOnInteraction: false }} // ✅ Auto-rotation enabled
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
             pagination={{ clickable: true }}
             navigation
-            breakpoints={{
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-            }}
+            onSwiper={(swiper) => setSwiperInstance(swiper)}
             className="relative rounded-lg overflow-hidden"
           >
             {/* Image Slides */}
-            {["white.JPG", "red.JPG", "blue.jpg", "stand.JPG", "mic.JPG", "luv.png"].map((img, index) => (
-              <SwiperSlide key={index} onClick={() => setSelectedMedia(`/${img}`)}
-                className="flex justify-center items-center">
+            {["white.JPG", "red.JPG", "blue.jpg"].map((img, index) => (
+              <SwiperSlide key={index} onClick={() => setSelectedMedia(`/${img}`)}>
                 <motion.img
                   src={`/${img}`}
                   alt={`Event ${index + 1}`}
@@ -144,43 +110,38 @@ export default function Home() {
             ))}
 
             {/* Video Slides */}
-          {["54.mp4", "yolo.mp4", "sweet.mp4", "wedding.mp4"].map((vid, index) => (
-  <SwiperSlide key={index} onClick={() => setSelectedMedia(`/videos/${vid}`)}
-    className="flex justify-center items-center">
-    <motion.video
-      controls
-      autoPlay={false} // ✅ Prevents auto-play
-      preload="metadata" // ✅ Loads metadata but does not play
-      className="w-full h-60 object-cover rounded-md cursor-pointer"
-      whileTap={{ scale: 0.9 }}
-    >
-      <source src={`/videos/${vid}`} type="video/mp4" />
-    </motion.video>
-  </SwiperSlide>
-))}
+            {["54.mp4", "yolo.mp4"].map((vid, index) => (
+              <SwiperSlide key={index}>
+                <motion.video
+                  ref={(el) => {
+                    if (el) {
+                      carouselVideoRefs.current[`/videos/${vid}`] = el;
+                    }
+                  }}
+                  controls
+                  autoPlay={false}
+                  preload="metadata"
+                  className="w-full h-60 object-cover rounded-md cursor-pointer"
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => {
+                    // Stop all other videos in the carousel
+                    Object.values(carouselVideoRefs.current).forEach((video) => {
+                      if (video) {
+                        video.pause();
+                        video.currentTime = 0;
+                      }
+                    });
 
-
+                    // Open the modal and stop Swiper autoplay
+                    setSelectedMedia(`/videos/${vid}`);
+                    if (swiperInstance) swiperInstance.autoplay.stop();
+                  }}
+                >
+                  <source src={`/videos/${vid}`} type="video/mp4" />
+                </motion.video>
+              </SwiperSlide>
+            ))}
           </Swiper>
-
-          {/* Move Navigation Buttons Outside */}
-          <style jsx>{`
-            .swiper-button-next,
-            .swiper-button-prev {
-              color: white; /* ✅ Change arrow color */
-              top: 50%;
-              transform: translateY(-50%);
-              width: 40px;
-              height: 40px;
-            }
-
-            .swiper-button-prev {
-              left: -50px; /* ✅ Move Left Arrow Outside */
-            }
-
-            .swiper-button-next {
-              right: -50px; /* ✅ Move Right Arrow Outside */
-            }
-          `}</style>
         </div>
       </section>
 
@@ -188,23 +149,32 @@ export default function Home() {
       {selectedMedia && (
         <motion.div
           className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
-          onClick={() => setSelectedMedia(null)}
+          onClick={closeModal}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          {/* ✅ Safe type check before calling `endsWith` */}
-          {typeof selectedMedia === "string" && selectedMedia.endsWith(".mp4") ? (
+          {selectedMedia.endsWith(".mp4") ? (
             <motion.video
+              ref={modalVideoRef}
               controls
+              autoPlay={false}
               className="max-w-full max-h-full rounded-lg shadow-lg"
               initial={{ scale: 0.5 }}
               animate={{ scale: 1 }}
+              onPlay={() => {
+                Object.values(carouselVideoRefs.current).forEach((video) => {
+                  if (video) {
+                    video.pause();
+                    video.currentTime = 0;
+                  }
+                });
+              }}
             >
               <source src={selectedMedia} type="video/mp4" />
             </motion.video>
           ) : (
             <motion.img
-              src={selectedMedia as string}
+              src={selectedMedia}
               className="max-w-full max-h-full rounded-lg shadow-lg"
               initial={{ scale: 0.5 }}
               animate={{ scale: 1 }}
@@ -212,7 +182,7 @@ export default function Home() {
           )}
         </motion.div>
       )}
-      
+
       {/* About & Contact Section */}
       <section className="w-full py-10 bg-black flex flex-col md:flex-row justify-center items-start gap-10 px-6">
         <About />
