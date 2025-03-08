@@ -1,44 +1,29 @@
 "use client";
-import { useState, useRef, useEffect } from "react"; // ✅ Import useEffect
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper";
+
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import About from "./components/About";
-import ContactForm from "./components/ContactForm";
 import ShootingStars from "./components/ShootingStars";
-
 
 export default function Home() {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
- // ✅ Zustand for global state
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // References for videos in the carousel
-  const carouselVideoRefs = useRef<{ [key: string]: HTMLVideoElement | null }>({});
-  const modalVideoRef = useRef<HTMLVideoElement | null>(null);
-
-  // Stops video before closing modal
+  // 🛑 Stops video & resets when closing modal
   const closeModal = () => {
-    if (modalVideoRef.current) {
-      modalVideoRef.current.pause();
-      modalVideoRef.current.currentTime = 0;
-      modalVideoRef.current.removeAttribute("src");
-      modalVideoRef.current.load();
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
     }
-    setSelectedMedia(null); // Local state reset
-
-    if (swiperInstance) swiperInstance.autoplay.start(); // Resume autoplay
-  };
-
-  // ✅ Clear Zustand state when the page loads
-  useEffect(() => {
     setSelectedMedia(null);
-  }, []);
-
+    if (swiperInstance) swiperInstance.autoplay.start(); // Resume autoplay when modal is closed
+  };
 
   return (
     <main className="flex flex-col items-center w-full text-white">
@@ -50,13 +35,13 @@ export default function Home() {
           <source src="/reel.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-      
+
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <div className="relative z-10 text-center">
           <h1 className="text-5xl font-bold">Welcome to Reels Entertainment 🎧</h1>
           <p className="mt-4 text-lg">Book me for your next event!</p>
 
-          {/* Book Now Button - Smooth Scroll to Contact Section */}
+          {/* Book Now Button */}
           <motion.button
             className="mt-6 px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg text-lg hover:bg-blue-600 transition duration-300"
             whileHover={{ scale: 1.05 }}
@@ -68,21 +53,29 @@ export default function Home() {
           >
             Book Now
           </motion.button>
-
-          {/* Watch Me Live Button - Smooth Scroll to Twitch Section */}
-          <motion.button
-            className="mt-4 ml-4 px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg text-lg hover:bg-purple-600 transition duration-300"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector("#twitch-live")?.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
-          >
-            🎥 Watch Me Live
-          </motion.button>
         </div>
       </section>
+
+      {/* Twitch Follow Section */}
+      <motion.section
+        className="relative w-full py-6 text-center overflow-hidden"
+        style={{ backgroundColor: "#9146FF", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)" }}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        <h2 className="text-2xl font-bold">Live streaming on Twitch! Follow for notifications.</h2>
+        <motion.a
+          href="https://www.twitch.tv/djreels/about"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-block px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-300 transition duration-300"
+          whileHover={{ scale: 1.05 }}
+        >
+          🚀 Follow on Twitch
+        </motion.a>
+      </motion.section>
+
       {/* Event Photo & Video Carousel */}
       <section className="w-full py-10 bg-black">
         <h2 className="text-2xl font-bold text-center mb-6">Past Event Highlights</h2>
@@ -94,11 +87,11 @@ export default function Home() {
             autoplay={{ delay: 3000, disableOnInteraction: false }}
             pagination={{ clickable: true }}
             navigation
-            onSwiper={(swiper) => setSwiperInstance(swiper)}
+            onSwiper={setSwiperInstance} // ✅ Save Swiper instance
             className="relative rounded-lg overflow-hidden"
           >
             {/* Image Slides */}
-            {["white.JPG", "red.JPG", "blue.jpg"].map((img, index) => (
+            {["white.JPG", "red.JPG", "blue.jpg", "stand.JPG", "mic.JPG", "luv.png"].map((img, index) => (
               <SwiperSlide key={index} onClick={() => setSelectedMedia(`/${img}`)}>
                 <motion.img
                   src={`/${img}`}
@@ -110,32 +103,14 @@ export default function Home() {
             ))}
 
             {/* Video Slides */}
-            {["54.mp4", "yolo.mp4"].map((vid, index) => (
-              <SwiperSlide key={index}>
+            {["54.mp4", "yolo.mp4", "sweet.mp4", "wedding.mp4"].map((vid, index) => (
+              <SwiperSlide key={index} onClick={() => setSelectedMedia(`/videos/${vid}`)}>
                 <motion.video
-                  ref={(el) => {
-                    if (el) {
-                      carouselVideoRefs.current[`/videos/${vid}`] = el;
-                    }
-                  }}
                   controls
-                  autoPlay={false}
-                  preload="metadata"
+                  autoPlay={false} // ✅ Prevents autoplay
+                  preload="metadata" // ✅ Loads metadata but does not play
                   className="w-full h-60 object-cover rounded-md cursor-pointer"
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => {
-                    // Stop all other videos in the carousel
-                    Object.values(carouselVideoRefs.current).forEach((video) => {
-                      if (video) {
-                        video.pause();
-                        video.currentTime = 0;
-                      }
-                    });
-
-                    // Open the modal and stop Swiper autoplay
-                    setSelectedMedia(`/videos/${vid}`);
-                    if (swiperInstance) swiperInstance.autoplay.stop();
-                  }}
                 >
                   <source src={`/videos/${vid}`} type="video/mp4" />
                 </motion.video>
@@ -149,26 +124,17 @@ export default function Home() {
       {selectedMedia && (
         <motion.div
           className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
-          onClick={closeModal}
+          onClick={closeModal} // ✅ Close modal on click
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           {selectedMedia.endsWith(".mp4") ? (
             <motion.video
-              ref={modalVideoRef}
+              ref={videoRef} // ✅ Reference for stopping video
               controls
-              autoPlay={false}
               className="max-w-full max-h-full rounded-lg shadow-lg"
               initial={{ scale: 0.5 }}
               animate={{ scale: 1 }}
-              onPlay={() => {
-                Object.values(carouselVideoRefs.current).forEach((video) => {
-                  if (video) {
-                    video.pause();
-                    video.currentTime = 0;
-                  }
-                });
-              }}
             >
               <source src={selectedMedia} type="video/mp4" />
             </motion.video>
@@ -182,13 +148,6 @@ export default function Home() {
           )}
         </motion.div>
       )}
-
-      {/* About & Contact Section */}
-      <section className="w-full py-10 bg-black flex flex-col md:flex-row justify-center items-start gap-10 px-6">
-        <About />
-        <ContactForm />
-      </section>
-
     </main>
   );
 }
