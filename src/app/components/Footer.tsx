@@ -2,7 +2,7 @@ import { FaInstagram, FaTiktok, FaTwitch } from "react-icons/fa";
 
 export default function Footer() {
     return (
-        <footer className="w-full bg-gray-900 text-white py-6">
+        <footer className="w-full bg-gray-900 pb-28 pt-6 text-white md:py-6">
             <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-6">
 
                 {/* Left: Twitch Schedule */}
