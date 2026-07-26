@@ -1,64 +1,140 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+const NAME_MIN_LENGTH = 2;
+const NAME_MAX_LENGTH = 100;
+const EMAIL_MAX_LENGTH = 254;
+const MESSAGE_MIN_LENGTH = 10;
+const MESSAGE_MAX_LENGTH = 5_000;
+const MAX_REQUEST_LENGTH = 20_000;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UNSAFE_MESSAGE_CONTROL_PATTERN = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
+const INVALID_SUBMISSION_ERROR = "Invalid submission.";
+const DELIVERY_ERROR = "Unable to send message. Please try again later.";
+
+type ContactPayload = {
+    name?: unknown;
+    email?: unknown;
+    message?: unknown;
+    website?: unknown;
+};
+
+function errorResponse(error: string, status: number) {
+    return NextResponse.json({ success: false, error }, { status });
+}
+
+function escapeHtml(value: string) {
+    return value.replace(/[&<>"']/g, (character) => {
+        const entities: Record<string, string> = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+        };
+
+        return entities[character];
+    });
+}
+
 export async function POST(req: Request) {
     try {
-        const { name, email, message } = await req.json();
-
-        if (!name || !email || !message) {
-            return NextResponse.json(
-                { success: false, error: "All fields are required" },
-                { status: 400 }
-            );
+        const rawBody = await req.text();
+        if (!rawBody || rawBody.length > MAX_REQUEST_LENGTH) {
+            return errorResponse(INVALID_SUBMISSION_ERROR, 400);
         }
 
-        // ✅ Ensure environment variables are loaded correctly
-        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-            return NextResponse.json(
-                { success: false, error: "Missing email credentials" },
-                { status: 500 }
-            );
+        let payload: ContactPayload;
+        try {
+            payload = JSON.parse(rawBody) as ContactPayload;
+        } catch {
+            return errorResponse(INVALID_SUBMISSION_ERROR, 400);
         }
 
-        // ✅ Set up Nodemailer transporter with Gmail
+        if (
+            !payload ||
+            typeof payload !== "object" ||
+            typeof payload.name !== "string" ||
+            typeof payload.email !== "string" ||
+            typeof payload.message !== "string" ||
+            (payload.website !== undefined && typeof payload.website !== "string")
+        ) {
+            return errorResponse(INVALID_SUBMISSION_ERROR, 400);
+        }
+
+        const name = payload.name.trim();
+        const email = payload.email.trim();
+        const message = payload.message.trim();
+        const website = payload.website?.trim() ?? "";
+
+        // Silently accept honeypot submissions so automated senders receive no signal.
+        if (website) {
+            return NextResponse.json({ success: true }, { status: 200 });
+        }
+
+        const isNameValid =
+            name.length >= NAME_MIN_LENGTH &&
+            name.length <= NAME_MAX_LENGTH &&
+            !/[\r\n\u0000-\u001F\u007F]/.test(name);
+        const isEmailValid =
+            email.length > 0 &&
+            email.length <= EMAIL_MAX_LENGTH &&
+            EMAIL_PATTERN.test(email);
+        const isMessageValid =
+            message.length >= MESSAGE_MIN_LENGTH &&
+            message.length <= MESSAGE_MAX_LENGTH &&
+            !UNSAFE_MESSAGE_CONTROL_PATTERN.test(message);
+
+        if (!isNameValid || !isEmailValid || !isMessageValid) {
+            return errorResponse(INVALID_SUBMISSION_ERROR, 400);
+        }
+
+        const emailUser = process.env.EMAIL_USER;
+        const emailPass = process.env.EMAIL_PASS;
+        const contactEmail = process.env.CONTACT_EMAIL;
+
+        if (!emailUser || !emailPass || !contactEmail) {
+            console.error("Contact email configuration is incomplete.");
+            return errorResponse(DELIVERY_ERROR, 500);
+        }
+
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 465, // Secure SSL Port
-            secure: true, // Use SSL
+            port: 465,
+            secure: true,
             auth: {
-                user: process.env.EMAIL_USER, // Your Gmail address
-                pass: process.env.EMAIL_PASS, // Your App Password (NOT your Gmail password)
+                user: emailUser,
+                pass: emailPass,
             },
         });
 
+        const safeName = escapeHtml(name);
+        const safeEmail = escapeHtml(email);
+        const safeMessage = escapeHtml(message);
 
-        // ✅ Improved HTML email format
         const mailOptions = {
-            from: `"${name}" <${email}>`,
-            to: "your_actual_email@gmail.com", // ✅ Replace this with your actual email
+            from: `"Reels Entertainment Contact" <${emailUser}>`,
+            to: contactEmail,
+            replyTo: email,
             subject: `New Contact Form Submission from ${name}`,
+            text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
             html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #f9f9f9;">
                     <h2 style="color: #333;">📩 New Contact Form Submission</h2>
-                    <p><strong>Name:</strong> ${name}</p>
-                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Name:</strong> ${safeName}</p>
+                    <p><strong>Email:</strong> ${safeEmail}</p>
                     <p><strong>Message:</strong></p>
-                    <p style="background: #eee; padding: 10px; border-radius: 5px;">${message}</p>
+                    <div style="background: #eee; padding: 10px; border-radius: 5px; white-space: pre-wrap;">${safeMessage}</div>
                     <hr>
                     <p style="color: gray; font-size: 12px;">This message was sent from your website's contact form.</p>
                 </div>
             `,
         };
 
-        // ✅ Send email
-        const info = await transporter.sendMail(mailOptions);
-        console.log("✅ Email sent:", info.response);
-
-        return NextResponse.json({ success: true, message: "Email sent successfully" }, { status: 200 });
-
-    } catch (error) {
-        console.error("❌ Error sending email:", error);
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
-        return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
+        await transporter.sendMail(mailOptions);
+        return NextResponse.json({ success: true }, { status: 200 });
+    } catch {
+        console.error("Contact email delivery failed.");
+        return errorResponse(DELIVERY_ERROR, 500);
     }
 }

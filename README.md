@@ -68,9 +68,13 @@ yarn install
 ```env
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-app-password
+CONTACT_EMAIL=contact-inbox@example.com
 ```
 
-> **Note:** You may need to enable "Less Secure Apps" or create an App Password in your Gmail account.
+`EMAIL_USER` is used to authenticate with Gmail and as the sender, `EMAIL_PASS`
+should be a Gmail App Password, and `CONTACT_EMAIL` is the inbox that receives
+contact-form submissions. Keep these values in `.env.local` or your deployment
+environment; never commit real credentials.
 
 ### 4️⃣ Run Development Server
 ```bash
